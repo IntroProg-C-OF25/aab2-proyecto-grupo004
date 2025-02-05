@@ -4,7 +4,7 @@ def main():
     carreras = ["Quimica", "Fisiorehabilitacion", "Medicina"]
     puntajes_minimos = [80, 90, 85]
     cupos = [80, float('inf'), 80]
-    fecha_limite = date(2025, 1, 28,)
+    fecha_limite = date(2025, 2, 8)
     admitidos_quimica = []
     puntajes_quimica = []
     admitidos_fisi = []
@@ -13,7 +13,7 @@ def main():
     puntajes_totales_medicina = []
     cont_quimi = 0
     cont_fisi = 0
-    cont_medi = 0
+    cont_medi = 0 
     while True:
         nombre = input("Ingrese su nombre (o 'salir' para finalizar): ").strip()
         if nombre.lower() == 'salir':
@@ -21,9 +21,11 @@ def main():
         if not verificar_fecha_limite(fecha_limite):
             print("El período de inscripción ha finalizado.")
             continue
-        examen_admision = obtener_puntaje()
+        examen_admision = int(input("Ingrese el puntaje de su examen de admisión: "))
+        if examen_admision < 0 or examen_admision > 100:
+            print("Número inválido. Intente nuevamente.")
+            continue
         opcion_carrera = seleccionar_carrera(carreras)
-        
         if opcion_carrera == -1:
             continue
         carrera_seleccionada = carreras[opcion_carrera]
@@ -38,35 +40,21 @@ def main():
             cont_fisi += 1
         elif carrera_seleccionada == "Medicina":
             puntaje_total = calcular_puntaje_total(examen_admision)
-            cont_medi = registrar_admitido(admitidos_medicina, puntajes_medicina, puntajes_totales_medicina, cont_medi, cupos[2], nombre, examen_admision, puntaje_total)
+            cont_medi = registrar_admitido_medicina(admitidos_medicina, puntajes_medicina, puntajes_totales_medicina, cont_medi, cupos[2], nombre, examen_admision, puntaje_total)
     mostrar_resultados("Quimica", admitidos_quimica, puntajes_quimica)
     mostrar_resultados("Fisiorehabilitacion", admitidos_fisi, [])
     mostrar_resultados("Medicina", admitidos_medicina, puntajes_totales_medicina)
 def verificar_fecha_limite(fecha_limite):
     return date.today() <= fecha_limite
-def obtener_puntaje():
-    while True:
-        try:
-            puntaje = int(input("Ingrese el puntaje de su examen de admisión: "))
-            if 0 <= puntaje <= 100:
-                return puntaje
-            else:
-                print("Número inválido. Intente nuevamente.")
-        except ValueError:
-            print("Entrada no válida. Intente nuevamente.")
 def seleccionar_carrera(carreras):
     print("\nOpciones de carreras:")
     for i, carrera in enumerate(carreras, 1):
         print(f"{i}. {carrera}")
-    try:
-        opcion = int(input("Seleccione el número de carrera que desea estudiar: ")) - 1
-        if 0 <= opcion < len(carreras):
-            return opcion
-        else:
-            print("Opción no válida.")
-            return -1
-    except ValueError:
-        print("Entrada no válida.")
+    opcion = int(input("Seleccione el número de carrera que desea estudiar: ")) - 1
+    if 0 <= opcion < len(carreras):
+        return opcion
+    else:
+        print("Opción no válida.")
         return -1
 def calcular_puntaje_total(puntaje_base):
     puntaje_adicional = 0
@@ -77,7 +65,6 @@ def calcular_puntaje_total(puntaje_base):
     if input("¿Tiene una capacidad especial menor al 35%? (si/no): ").strip().lower() == "si":
         puntaje_adicional += 1
     return puntaje_base + puntaje_adicional
-
 def registrar_admitido(admitidos, puntajes, contador, cupo_max, nombre, puntaje):
     if contador < cupo_max:
         admitidos.append(nombre)
@@ -86,7 +73,7 @@ def registrar_admitido(admitidos, puntajes, contador, cupo_max, nombre, puntaje)
     else:
         print("No hay más cupos disponibles.")
         return contador
-def registrar_admitido(admitidos, puntajes, puntajes_totales, contador, cupo_max, nombre, puntaje, puntaje_total):
+def registrar_admitido_medicina(admitidos, puntajes, puntajes_totales, contador, cupo_max, nombre, puntaje, puntaje_total):
     if contador < cupo_max:
         admitidos.append(nombre)
         puntajes.append(puntaje)
